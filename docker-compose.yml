@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+  server:
+    build: ./server
+    ports:
+      - '8080:80'
+
+  client:
+    build: ./client
+    ports:
+      - '8081:8081'
+    volumes:
+      - type: bind
+        source: ./client/src
+        target: /app/src
+        readonly: true
