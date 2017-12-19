@@ -1,0 +1,19 @@
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "browsers": ["last 2 versions", "not Explorer < 11", "not ExplorerMobile < 11"]
+      },
+      "modules": false
+    }]
+  ],
+  "plugins": [
+    "transform-react-jsx",
+    "transform-runtime"
+  ],
+  "env": {
+    "production": {
+      "plugins": ["transform-react-constant-elements"]
+    }
+  }
+}

@@ -1,16 +1,63 @@
 version: '3.3'
 services:
+  database:
+    image: postgres:9.6-alpine
+    ports:
+      - 5432:5432
+    environment:
+        POSTGRES_USER: 'postgres'
+        POSTGRES_PASSWORD: 'password'
+    volumes:
+      - type: volume
+        source: pgdata
+        target: /var/lib/postgresql/data
+    networks:
+      internal:
+        aliases:
+          - database
+
+  email:
+    image: mailhog/mailhog
+    ports:
+      - 8125:1025
+      - 8025:8025
+    networks:
+      internal:
+        aliases:
+          - mail
+
   server:
     build: ./server
     ports:
-      - '8080:80'
+      - 8080:80
+      - 9229:9229
+    env_file: ./server/.env.dev
+    environment:
+      NODE_ENV: development
+    volumes:
+      - type: volume
+        source: fsdata
+        target: /app/storage
+    networks:
+      - internal
 
   client:
     build: ./client
     ports:
-      - '8081:8081'
+      - 8081:8081
+    command: ['npm', 'start'] # exec notation needed for signals to work
+    env_file: ./client/.env.dev
+    environment:
+      NODE_ENV: development
     volumes:
       - type: bind
         source: ./client/src
         target: /app/src
         readonly: true
+
+volumes:
+  pgdata:
+  fsdata:
+
+networks:
+  internal:
